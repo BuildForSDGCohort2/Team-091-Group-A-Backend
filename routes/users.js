@@ -17,7 +17,7 @@
  router.post('/', async(req, res) => {
 
      // validate input from user 
-     const { error } = validate(req.body);
+     const error = validate(req.body);
      if (error) return res.status(400).send(error.details[0].message);
 
      try {
