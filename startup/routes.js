@@ -17,8 +17,8 @@
 
      app.use(helmet());
      app.use('/', home);
-     app.use('/api/users', users);
-     app.use('/api/auth', auth);
+     app.use('/api/v1/auth', users);
+     app.use('/api/v1/auth/login', auth);
 
      app.use(error);
  }
