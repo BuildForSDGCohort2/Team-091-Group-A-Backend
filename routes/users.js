@@ -25,8 +25,8 @@ router.post("/register", async (req, res) => {
     // check if user already exists
     let user = await User.findOne({ email: req.body.email });
     if (user) {
-      return res.status(400).send(`User already exists.....`)
-    };
+      return res.status(400).send("User already exists.....");
+    }
 
     user = new User(
       _.pick(req.body, ["firstname", "lastname", "email", "password"])
@@ -37,7 +37,9 @@ router.post("/register", async (req, res) => {
     res.send(_.pick(user, ["_id", "firstname", "lastname", "email"]));
   } catch (ex) {
     for (const fields in ex.errors) {
-      winston.error(ex.errors[fields]);
+      if (ex.errors.hasOwnProperty(fields)) {
+        winston.error(ex.errors[fields]);
+      }
     }
   }
 });
