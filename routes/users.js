@@ -8,7 +8,7 @@
 
  // Router to get user
  router.get('/user/me', auth, async(req, res) => {
-     const user = await User.findByOne(req.user._id).select('-password');
+     const user = await User.findOne({_id: req.user._id}).select('-password');
      res.send(user);
  });
 
@@ -17,9 +17,10 @@
  router.post('/register', async(req, res) => {
 
      // validate input from user 
-     const error = validate(req.body);
-     if (error) return res.status(400).send(error.details[0].message);
-
+     const { error } = validate(req.body);
+     if (error){ 
+         return res.status(400).send(error.details[0].message);
+        }
      try {
          // check if user already exists
          let user = await User.findOne({ email: req.body.email });
