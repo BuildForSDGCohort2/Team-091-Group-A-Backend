@@ -5,6 +5,7 @@ const { User, validate } = require("../models/user");
 const express = require("express");
 const winston = require("winston");
 
+/*eslint new-cap: "error"*/
 const router = express.Router();
 
 // Router to get user
