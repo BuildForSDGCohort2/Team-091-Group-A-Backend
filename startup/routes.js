@@ -1,5 +1,6 @@
 const helmet = require("helmet");
 const express = require("express");
+const cors = require("cors");
 const home = require("../routes/home");
 const users = require("../routes/users");
 const auth = require("../routes/auth");
@@ -9,7 +10,7 @@ const error = require("../middleware/error");
 module.exports = function (app) {
   // Using inbuilt middleware
   app.use(express.json());
-
+  app.use(cors());
   app.use(express.urlencoded({ extended: true }));
 
   app.use(express.static("public"));

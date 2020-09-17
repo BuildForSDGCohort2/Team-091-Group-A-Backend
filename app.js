@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const app = express();
 
 dotenv.config();
+
 // Startup
 require("./startup/logging")();
 require("./startup/db")();
