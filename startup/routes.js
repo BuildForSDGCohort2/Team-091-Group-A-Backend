@@ -1,24 +1,24 @@
- const helmet = require('helmet');
- const express = require('express');
- const home = require('../routes/home');
- const users = require('../routes/users');
- const auth = require('../routes/auth');
+const helmet = require("helmet");
+const express = require("express");
+const cors = require("cors");
+const home = require("../routes/home");
+const users = require("../routes/users");
+const auth = require("../routes/auth");
 
- const error = require('../middleware/error');
+const error = require("../middleware/error");
 
- module.exports = function(app) {
+module.exports = function (app) {
+  // Using inbuilt middleware
+  app.use(express.json());
+  app.use(cors());
+  app.use(express.urlencoded({ extended: true }));
 
-     // Using inbuilt middleware 
-     app.use(express.json());
+  app.use(express.static("public"));
 
-     app.use(express.urlencoded({ extended: true }));
+  app.use(helmet());
+  app.use("/", home);
+  app.use("/api/v1/auth", users);
+  app.use("/api/v1/auth/login", auth);
 
-     app.use(express.static('public'));
-
-     app.use(helmet());
-     app.use('/', home);
-     app.use('/api/users', users);
-     app.use('/api/auth', auth);
-
-     app.use(error);
- }
+  app.use(error);
+};

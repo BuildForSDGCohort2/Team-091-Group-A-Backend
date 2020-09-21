@@ -1,42 +1,48 @@
- const auth = require('../middleware/auth');
- const _ = require('lodash');
- const bcrypt = require('bcrypt');
- const { User, validate } = require('../models/user');
- const mongoose = require('mongoose');
- const express = require('express');
- const router = express.Router();
+const auth = require("../middleware/auth");
+const _ = require("lodash");
+const bcrypt = require("bcryptjs");
+const { User, validate } = require("../models/user");
+const express = require("express");
+const winston = require("winston");
 
- // Router to get user
- router.get('/me', auth, async(req, res) => {
-     const user = await User.findByOne(req.user._id).select('-password');
-     res.send(user);
- });
+/*eslint new-cap: "error"*/
+const router = express.Router();
 
- // Router to create new user
+// Router to get user
+router.get("/user/me", auth, async (req, res) => {
+  const user = await User.findOne({ _id: req.user._id }).select("-password");
+  res.send(user);
+});
 
- router.post('/', async(req, res) => {
+// Router to create new user
 
-     // validate input from user 
-     const error = validate(req.body);
-     if (error) return res.status(400).send(error.details[0].message);
+router.post("/register", async (req, res) => {
+  // validate input from user
+  const error = validate(req.body);
+  if (error.error) {
+    return res.status(400).send(error.error.details[0].message);
+  }
+  try {
+    // check if user already exists
+    let user = await User.findOne({ email: req.body.email });
+    if (user) {
+      return res.status(400).send("User already exists.....");
+    }
 
-     try {
-         // check if user already exists
-         let user = await User.findOne({ email: req.body.email });
-         if (user) return res.status(400).send(`User already exists.....`);
+    user = new User(
+      _.pick(req.body, ["firstname", "lastname", "email", "password"])
+    );
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(user.password, salt); // hashing user's password
+    await user.save();
+    res.send(_.pick(user, ["_id", "firstname", "lastname", "email"]));
+  } catch (ex) {
+    for (const fields in ex.errors) {
+      if (ex.errors.hasOwnProperty(fields)) {
+        winston.error(ex.errors[fields]);
+      }
+    }
+  }
+});
 
-         user = new User(_.pick(req.body, ['firstname', 'lastname', 'email', 'password']));
-         const salt = await bcrypt.genSalt(10);
-         user.password = await bcrypt.hash(user.password, salt); // hashing user's password
-         await user.save();
-         res.send(_.pick(user, ['_id', 'firstname', 'lastname', 'email']));
-     } catch (ex) {
-         for (fields in ex.errors) {
-             winston.error(ex.errors[fields]);
-         }
-     }
-
- })
-
-
- module.exports = router;
+module.exports = router;
