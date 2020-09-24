@@ -1,16 +1,8 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
+const Schema = mongoose.Schema;
 
-const tripSchema = new mongoose.Schema({
-  serviceProvider: {
-    type: String,
-    required: true
-  },
-  serviceType: {
-    type: String,
-    enum: ["flight", "bus", "car", "rail", "ship"],
-    default: "bus"
-  },
+const serviceSchema = Schema({
   destination: {
     type: String,
     required: true
@@ -24,17 +16,39 @@ const tripSchema = new mongoose.Schema({
     required: true
   },
   timeOfDeparture: {
-    type: Date,
+    type: String,
     required: true
   },
   estimateTimeOfArrival: {
     type: Number,
     required: true
+  },
+  provider: {
+    type: Schema.Types.ObjectId,
+    ref: "Provider"
   }
 });
 
+const Service = mongoose.model("Service", serviceSchema);
 
-const Trip = mongoose.model("Trip", tripSchema);
+const providerSchema = Schema({
+  serviceProvider: {
+    type: String,
+    required: true
+  },
+  serviceType: {
+    type: String,
+    enum: ["flight", "bus", "car", "rail", "ship"],
+    default: "bus"
+  },
+  services: [{
+    type: Schema.Types.ObjectId,
+    ref: "Service"
+  }]
+});
+
+
+const Provider = mongoose.model("Provider", providerSchema);
 
 const validateTrip = (trip) => {
   const schema = Joi.object({
@@ -48,7 +62,9 @@ const validateTrip = (trip) => {
   });
   return schema.validate(trip);
 }
+
 module.exports = {
-  Trip,
-  validateTrip
+  Provider,
+  validateTrip,
+  Service
 }
