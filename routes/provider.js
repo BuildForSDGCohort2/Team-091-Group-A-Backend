@@ -13,7 +13,7 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
-    const providers = await Provider.find().populate("services");
+    const providers = await Provider.find().populate("services").exec();
     res.status(200).json({
       message: "success",
       data: providers,
@@ -29,7 +29,7 @@ router.get("/", async (req, res) => {
 router.post("/", auth, checkAdmin, async (req, res) => {
   const { serviceProvider, serviceType, services } = req.body;
   try {
-    const error = await validateTrip(req.body);
+    const error = validateTrip(req.body);
     if (error.error) {
       return res.status(400).json({
         message: "error",
@@ -39,10 +39,7 @@ router.post("/", auth, checkAdmin, async (req, res) => {
     const provider = new Provider({ serviceProvider, serviceType });
     await provider.save((err) => {
       if (err) {
-        res.status(400).json({
-          message: "error",
-          error,
-        });
+        console.log(err)
       }
       services.forEach(
         ({
@@ -60,22 +57,15 @@ router.post("/", auth, checkAdmin, async (req, res) => {
             estimateTimeOfArrival,
             provider: provider._id,
           });
-          service.save((error) => {
-            if (error) {
-              console.log(error);
-              res.status(400).json({
-                message: "error",
-                error,
-              });
-            }
-          });
+          service.save();
         }
       );
     });
     res.status(201).json({
       message: "success",
       data: {
-        provider,
+        provider: _.pick(provider, ["_id", "serviceProvider", "serviceType"]),
+        services
       },
     });
   } catch (error) {

@@ -3,7 +3,7 @@ const Joi = require("joi");
 const Schema = mongoose.Schema;
 
 const providerSchema = Schema({
-  destination: {
+  serviceProvider: {
     type: String,
     required: true,
   },
