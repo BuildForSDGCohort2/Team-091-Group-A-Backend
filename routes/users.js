@@ -64,7 +64,8 @@ router.post("/register/admin", async (req, res) => {
     );
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt); // hashing user's password
-    user.isAdmin = await user.save();
+    user.isAdmin =  true;
+    user.save();
     res.send(
       _.pick(user, ["_id", "firstname", "lastname", "email", "isAdmin"])
     );
