@@ -4,6 +4,8 @@ const bcrypt = require("bcryptjs");
 const { User, validate } = require("../models/user");
 const express = require("express");
 const winston = require("winston");
+const transport = require("../utils/mailConfig");
+const welcomeMessage = require("../utils/welcomeMesage");
 
 /*eslint new-cap: "error"*/
 const router = express.Router();
@@ -35,6 +37,19 @@ router.post("/register", async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt); // hashing user's password
     await user.save();
+    const message = {
+      from: process.env.NODEMAILER_USER,
+      to: user.email,
+      subject: 'Welcome to Transall',
+      html: welcomeMessage(user)
+    }
+    transport.sendMail(message, (err, info) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(info);
+      }
+    })
     res.send(
       _.pick(user, ["_id", "firstname", "lastname", "email", "isAdmin"])
     );
@@ -64,7 +79,21 @@ router.post("/register/admin", async (req, res) => {
     );
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt); // hashing user's password
-    user.isAdmin = await user.save();
+    user.isAdmin =  true;
+    user.save();
+    const message = {
+      from: process.env.NODEMAILER_USER,
+      to: user.email,
+      subject: 'Welcome to Transall',
+      html: welcomeMessage(user)
+    }
+    transport.sendMail(message, (err, info) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(info);
+      }
+    })
     res.send(
       _.pick(user, ["_id", "firstname", "lastname", "email", "isAdmin"])
     );
