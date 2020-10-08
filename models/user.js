@@ -45,7 +45,10 @@ userSchema.methods.generateAuthKey = function () {
       isAdmin: this.isAdmin,
       email: this.email,
     },
-    config.get("jwtPrivateKey")
+    config.get("jwtPrivateKey"),
+     {
+      expiresIn: '24h'
+    }
   );
   return token;
 };

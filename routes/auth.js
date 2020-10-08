@@ -37,7 +37,8 @@ router.post("/", async (req, res) => {
   }
   const token = user.generateAuthKey();
   res.header("x-auth-token", token).json({
-    status: "success",
+    message: "success",
+    user,
     token 
   });
 });

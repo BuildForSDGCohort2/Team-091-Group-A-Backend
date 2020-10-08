@@ -13,7 +13,17 @@ const router = express.Router();
 // Router to get user
 router.get("/user/me", auth, async (req, res) => {
   const user = await User.findOne({ _id: req.user._id }).select("-password");
-  res.send(user);
+  if (user) {
+    res.status(200).json({
+      message: "success",
+      user
+    });
+  } else {
+    res.status(400).send({
+      message: "success",
+      error: "User does not exists"
+    });
+  }
 });
 
 // Router to create new user
@@ -50,9 +60,13 @@ router.post("/register", async (req, res) => {
         console.log(info);
       }
     })
-    res.send(
-      _.pick(user, ["_id", "firstname", "lastname", "email", "isAdmin"])
-    );
+    const token = user.generateAuthKey();
+
+    res.status(201).json({
+      message: "success",
+      token,
+      user: _.pick(user, ["_id", "firstname", "lastname", "email", "isAdmin"])
+    });
   } catch (ex) {
     for (const fields in ex.errors) {
       if (ex.errors.hasOwnProperty(fields)) {
@@ -94,9 +108,12 @@ router.post("/register/admin", async (req, res) => {
         console.log(info);
       }
     })
-    res.send(
-      _.pick(user, ["_id", "firstname", "lastname", "email", "isAdmin"])
-    );
+    const token = user.generateAuthKey();
+    res.status(201).json({
+      message: "success",
+      token,
+      user
+    });
   } catch (ex) {
     for (const fields in ex.errors) {
       if (ex.errors.hasOwnProperty(fields)) {
