@@ -5,7 +5,7 @@ const home = require("../routes/home");
 const users = require("../routes/users");
 const auth = require("../routes/auth");
 const provider = require("../routes/provider");
-
+const order = require("../routes/order");
 const error = require("../middleware/error");
 
 module.exports = function (app) {
@@ -21,5 +21,6 @@ module.exports = function (app) {
   app.use("/api/v1/auth", users);
   app.use("/api/v1/auth/login", auth);
   app.use("/api/v1/providers", provider);
+  app.use("/api/v1/orders", order);
   app.use(error);
 };

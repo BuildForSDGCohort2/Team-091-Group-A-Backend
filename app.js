@@ -13,7 +13,7 @@ require("./startup/validation")();
 require("./startup/routes")(app);
 
 // setting and listening for port....
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
 app.listen(port, () => {
   winston.info(`Listening for port ....${port}`);

@@ -1,3 +1,7 @@
 .env
 
+.logfile.log
+
+.uncaughtExceptions.log
+
 node_modules/

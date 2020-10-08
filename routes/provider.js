@@ -100,6 +100,7 @@ router.get("/services", async (req, res) => {
 
 router.get("/services/:id", async (req, res) => {
   const { id } = req.params;
+  console.log(id);
   try {
     const provider = await Service.findById({ _id: id }).populate({
       path: "provider",
@@ -110,7 +111,12 @@ router.get("/services/:id", async (req, res) => {
         message: "success",
         data: provider,
       });
-    }
+    } else {
+      res.status(404).json({
+      message: "error",
+      error: "Service Not found in the database",
+    });
+    } 
   } catch (error) {
     res.status(400).json({
       message: "error",
