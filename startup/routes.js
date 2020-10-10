@@ -7,6 +7,7 @@ const auth = require("../routes/auth");
 const provider = require("../routes/provider");
 const order = require("../routes/order");
 const error = require("../middleware/error");
+const contact = require("../routes/contact");
 
 module.exports = function (app) {
   // Using inbuilt middleware
@@ -22,5 +23,6 @@ module.exports = function (app) {
   app.use("/api/v1/auth/login", auth);
   app.use("/api/v1/providers", provider);
   app.use("/api/v1/orders", order);
+  app.use("/api/v1/contact", contact);
   app.use(error);
 };

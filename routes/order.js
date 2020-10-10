@@ -3,7 +3,7 @@ const _ = require("lodash");
 const Order = require("../models/order");
 const auth = require("../middleware/auth");
 const { Service } = require("../models/service");
-
+const pdf = require('html-pdf');
 const router = express.Router();
 
 const getTotalAmount = (arr) => {
@@ -118,5 +118,24 @@ router.get("/user", auth, async(req, res) => {
   }
 })
 
+router.get("/test", (req, res) => {
+  const data = {
+    hello: "Hello world in a pdf"
+  }
+  const html = `
+  <html>
+    <body>
+      <h1>{data.hello}</h1>
+    </body>
+  </html>
+  `
+  var options = { format: 'Letter' };
+
+  pdf.create(html, options).toFile('./businesscard.pdf', function(err, resp) {
+  if (err) return console.log(err);
+  console.log(resp); // { filename: '/app/businesscard.pdf' }
+  res.send(resp)
+});
+})
 
 module.exports = router;
