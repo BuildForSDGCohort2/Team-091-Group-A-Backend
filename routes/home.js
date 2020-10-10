@@ -6,5 +6,7 @@ const router = express.Router();
 router.get("/", (req, res) => {
   res.send("Welcome Team-091-Group-A......!!!");
 });
-
+router.get("/api/v1", (req, res) => {
+  res.send("Welcome Team-091-Group-A......!!!");
+});
 module.exports = router;
